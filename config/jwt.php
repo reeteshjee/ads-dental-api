@@ -3,7 +3,6 @@ class JWT {
     private static $secret_key;
     private static $algorithm = 'HS256';
 
-    // Ensure secret key is set when first accessed
     private static function getSecretKey(): string {
         if (!isset(self::$secret_key)) {
             self::$secret_key = $_ENV['JWT_SECRET'] ?? '';
