@@ -1,0 +1,101 @@
+# Composer dependencies
+/vendor/
+composer.lock
+
+# Environment configuration
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# PHPUnit
+.phpunit.result.cache
+/phpunit.xml
+phpunit-report/
+coverage/
+.phpunit.cache/
+
+# Logs
+*.log
+/logs/
+/storage/logs/
+
+# Cache
+/cache/
+/tmp/
+*.cache
+
+# Database
+*.sqlite
+*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Node modules (if you add any frontend build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build artifacts
+/build/
+/dist/
+
+# Test coverage reports
+/coverage/
+clover.xml
+coverage.xml
+
+# PHPStorm
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# NetBeans
+nbproject/
+
+# Eclipse
+.buildpath
+.project
+.settings/
+
+# MAC OS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Sensitive data
+*.pem
+*.key
+*.crt
+secrets.json

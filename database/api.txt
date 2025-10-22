@@ -1,0 +1,309 @@
+===================================================================================
+API DOCUMENTATION
+===================================================================================
+
+BASE URL: http://localhost/api
+
+===================================================================================
+AUTHENTICATION ENDPOINTS
+===================================================================================
+
+1. LOGIN
+   POST /auth/login
+   Body: {
+       "email": "user@example.com",
+       "password": "password"
+   }
+   Response: {
+       "message": "Login successful.",
+       "token": "jwt_token_here",
+       "user": {
+           "id": 1,
+           "email": "user@example.com",
+           "role": "dentist"
+       }
+   }
+
+===================================================================================
+DENTIST ENDPOINTS
+===================================================================================
+
+2. REGISTER DENTIST (Office Manager only)
+   POST /dentists/register
+   Headers: Authorization: Bearer {token}
+   Body: {
+       "first_name": "John",
+       "last_name": "Smith",
+       "contact_phone": "555-1234",
+       "email": "dentist@example.com",
+       "specialization": "Orthodontics",
+       "password": "password123"
+   }
+   Response: {
+       "message": "Dentist registered successfully.",
+       "dentist_id": 1
+   }
+
+3. GET ALL DENTISTS
+   GET /dentists
+   Headers: Authorization: Bearer {token}
+   Response: {
+       "dentists": [...]
+   }
+
+4. GET DENTIST APPOINTMENTS (Dentist only)
+   GET /dentists/appointments
+   Headers: Authorization: Bearer {token}
+   Response: {
+       "appointments": [
+           {
+               "id": 1,
+               "appointment_date": "2025-10-25",
+               "appointment_time": "10:00:00",
+               "status": "confirmed",
+               "patient_first_name": "Jane",
+               "patient_last_name": "Doe",
+               "patient_phone": "555-5678",
+               "patient_email": "jane@example.com",
+               "patient_dob": "1990-05-15",
+               "patient_address": "123 Main St",
+               "surgery_name": "ADS Main Surgery",
+               "surgery_address": "123 Dental Street",
+               "surgery_phone": "555-1000"
+           }
+       ]
+   }
+
+===================================================================================
+PATIENT ENDPOINTS
+===================================================================================
+
+5. ENROLL PATIENT (Office Manager only)
+   POST /patients/enroll
+   Headers: Authorization: Bearer {token}
+   Body: {
+       "first_name": "Jane",
+       "last_name": "Doe",
+       "contact_phone": "555-5678",
+       "email": "patient@example.com",
+       "mailing_address": "123 Main Street, City, State 12345",
+       "date_of_birth": "1990-05-15",
+       "password": "password123"
+   }
+   Response: {
+       "message": "Patient enrolled successfully.",
+       "patient_id": 1
+   }
+
+6. GET ALL PATIENTS (Office Manager only)
+   GET /patients
+   Headers: Authorization: Bearer {token}
+   Response: {
+       "patients": [...]
+   }
+
+7. GET PATIENT APPOINTMENTS (Patient only)
+   GET /patients/appointments
+   Headers: Authorization: Bearer {token}
+   Response: {
+       "appointments": [
+           {
+               "id": 1,
+               "appointment_date": "2025-10-25",
+               "appointment_time": "10:00:00",
+               "status": "confirmed",
+               "dentist_first_name": "John",
+               "dentist_last_name": "Smith",
+               "dentist_specialization": "Orthodontics",
+               "dentist_phone": "555-1234",
+               "dentist_email": "dentist@example.com",
+               "surgery_name": "ADS Main Surgery",
+               "surgery_address": "123 Dental Street",
+               "surgery_phone": "555-1000"
+           }
+       ]
+   }
+
+8. REQUEST APPOINTMENT (Patient only - Online form)
+   POST /patients/appointments/request
+   Headers: Authorization: Bearer {token}
+   Body: {
+       "preferred_date": "2025-10-25",
+       "preferred_time": "10:00:00"
+   }
+   Response: {
+       "message": "Appointment request submitted successfully.",
+       "appointment_id": 1
+   }
+   Note: Returns 403 if patient has outstanding bill
+
+9. CANCEL APPOINTMENT (Patient only)
+   PUT /patients/appointments/{id}/cancel
+   Headers: Authorization: Bearer {token}
+   Response: {
+       "message": "Appointment cancelled successfully."
+   }
+
+===================================================================================
+APPOINTMENT ENDPOINTS
+===================================================================================
+
+10. BOOK APPOINTMENT (Office Manager only)
+    POST /appointments
+    Headers: Authorization: Bearer {token}
+    Body: {
+        "patient_id": 1,
+        "dentist_id": 1,
+        "surgery_id": 1,
+        "appointment_date": "2025-10-25",
+        "appointment_time": "10:00:00",
+        "request_type": "phone"
+    }
+    Response: {
+        "message": "Appointment booked and confirmed successfully.",
+        "appointment_id": 1
+    }
+    Note: 
+    - Returns 403 if patient has outstanding bill
+    - Returns 403 if dentist has 5+ appointments in that week
+    - Sends confirmation email to patient
+
+11. GET ALL APPOINTMENTS (Office Manager only)
+    GET /appointments
+    Headers: Authorization: Bearer {token}
+    Response: {
+        "appointments": [...]
+    }
+
+12. GET APPOINTMENT BY ID
+    GET /appointments/{id}
+    Headers: Authorization: Bearer {token}
+    Response: {
+        "appointment": {...}
+    }
+    Note: Patients can only view their own appointments
+          Dentists can only view their assigned appointments
+
+13. UPDATE APPOINTMENT (Office Manager or Patient)
+    PUT /appointments/{id}
+    Headers: Authorization: Bearer {token}
+    Body: {
+        "appointment_date": "2025-10-26",
+        "appointment_time": "14:00:00",
+        "dentist_id": 2,
+        "surgery_id": 2
+    }
+    Response: {
+        "message": "Appointment updated successfully."
+    }
+    Note: Validates dentist weekly limit on date/dentist changes
+
+===================================================================================
+SURGERY ENDPOINTS
+===================================================================================
+
+14. CREATE SURGERY (Office Manager only)
+    POST /surgeries
+    Headers: Authorization: Bearer {token}
+    Body: {
+        "name": "ADS South Surgery",
+        "location_address": "999 Dental Plaza, Mesa, AZ 85201",
+        "telephone_number": "555-4000"
+    }
+    Response: {
+        "message": "Surgery created successfully.",
+        "surgery_id": 4
+    }
+
+15. GET ALL SURGERIES (All authenticated users)
+    GET /surgeries
+    Headers: Authorization: Bearer {token}
+    Response: {
+        "surgeries": [
+            {
+                "id": 1,
+                "name": "ADS Main Surgery",
+                "location_address": "123 Dental Street, Phoenix, AZ 85001",
+                "telephone_number": "555-1000"
+            }
+        ]
+    }
+
+16. GET SURGERY BY ID (All authenticated users)
+    GET /surgeries/{id}
+    Headers: Authorization: Bearer {token}
+    Response: {
+        "surgery": {...}
+    }
+
+===================================================================================
+BUSINESS RULES IMPLEMENTED
+===================================================================================
+
+1. ✓ Office Manager can register Dentists with unique ID
+2. ✓ Office Manager can enroll Patients
+3. ✓ Patients can request appointments (phone or online)
+4. ✓ Office Manager can book appointments
+5. ✓ Confirmation email sent on booking (placeholder - implement SMTP)
+6. ✓ Dentists can sign-in and view their appointments with patient details
+7. ✓ Patients can sign-in and view their appointments with dentist info
+8. ✓ Patients can cancel appointments
+9. ✓ Patients can request to change appointments (via update endpoint)
+10. ✓ Dentist cannot have more than 5 appointments per week (validated)
+11. ✓ Patient cannot request appointment if outstanding bill exists (validated)
+12. ✓ All appointment details include Surgery information
+13. ✓ JWT authentication for all protected endpoints
+14. ✓ Role-based access control (Office Manager, Dentist, Patient)
+
+===================================================================================
+INSTALLATION INSTRUCTIONS
+===================================================================================
+
+1. Create MySQL database and run the schema above
+2. Update database credentials in Database class
+3. Change JWT secret key in production
+4. Configure web server (Apache/Nginx) to route all requests to index.php
+5. Enable mod_rewrite (Apache) or configure nginx routing
+
+Apache .htaccess example:
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.*)$ index.php [QSA,L]
+
+Nginx configuration example:
+location /api {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+
+6. Test endpoints using Postman or similar tool
+
+===================================================================================
+TESTING WORKFLOW
+===================================================================================
+
+1. Login as Office Manager:
+   POST /auth/login
+   {"email": "manager@ads.com", "password": "password"}
+
+2. Register a Dentist:
+   POST /dentists/register (use token from step 1)
+
+3. Enroll a Patient:
+   POST /patients/enroll (use token from step 1)
+
+4. Login as Patient:
+   POST /auth/login (use patient credentials)
+
+5. Request an appointment:
+   POST /patients/appointments/request (use patient token)
+
+6. Login as Office Manager and book the appointment:
+   POST /appointments (use manager token)
+
+7. Login as Dentist and view appointments:
+   GET /dentists/appointments (use dentist token)
+
+8. Login as Patient and view appointments:
+   GET /patients/appointments (use patient token)
+
