@@ -38,7 +38,6 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Database connection
 $database = new Database();
 $db = $database->getConnection();
 
