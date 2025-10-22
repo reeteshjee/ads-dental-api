@@ -1,8 +1,9 @@
 RewriteEngine On
+RewriteBase /
 
-# Skip existing files or directories
+# If the request is not a real file or directory
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Route everything (inside /api) to index.php
-RewriteRule ^(.*)$ index.php [QSA,L]
+# Route anything starting with /api to index.php
+RewriteRule ^api/(.*)$ index.php [QSA,L]
