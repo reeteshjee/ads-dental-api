@@ -1,19 +1,30 @@
 <?php
 class JWT {
-    private static $secret_key = "your_secret_key_change_this_in_production";
+    private static $secret_key;
     private static $algorithm = 'HS256';
+
+    // Ensure secret key is set when first accessed
+    private static function getSecretKey(): string {
+        if (!isset(self::$secret_key)) {
+            self::$secret_key = $_ENV['JWT_SECRET'] ?? '';
+            if (self::$secret_key === '') {
+                throw new Exception("JWT secret key not set in environment!");
+            }
+        }
+        return self::$secret_key;
+    }
 
     public static function encode($payload) {
         $header = json_encode(['typ' => 'JWT', 'alg' => self::$algorithm]);
         $payload = json_encode($payload);
-        
+
         $base64UrlHeader = self::base64UrlEncode($header);
         $base64UrlPayload = self::base64UrlEncode($payload);
-        
-        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, 
-                              self::$secret_key, true);
+
+        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload,
+                               self::getSecretKey(), true);
         $base64UrlSignature = self::base64UrlEncode($signature);
-        
+
         return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
     }
 
@@ -30,7 +41,7 @@ class JWT {
         $base64UrlHeader = self::base64UrlEncode($header);
         $base64UrlPayload = self::base64UrlEncode($payload);
         $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload,
-                              self::$secret_key, true);
+                               self::getSecretKey(), true);
         $base64UrlSignature = self::base64UrlEncode($signature);
 
         if ($base64UrlSignature !== $signatureProvided) {

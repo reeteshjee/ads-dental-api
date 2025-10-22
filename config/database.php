@@ -1,11 +1,18 @@
 <?php
 
 class Database {
-    private $host = "localhost";
-    private $db_name = "dental";
-    private $username = "root";
-    private $password = "test";
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     private $conn;
+
+    public function __construct() {
+        $this->host = $_ENV["DB_HOST"];       // or $_ENV['DB_HOST']
+        $this->username = $_ENV['DB_USER'];
+        $this->password = $_ENV['DB_PASSWORD'];
+        $this->db_name = $_ENV['DB_NAME'];
+    }
 
     public function getConnection() {
         $this->conn = null;
