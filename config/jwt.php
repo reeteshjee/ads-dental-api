@@ -1,5 +1,4 @@
 <?php
-
 class JWT {
     private static $secret_key = "your_secret_key_change_this_in_production";
     private static $algorithm = 'HS256';
