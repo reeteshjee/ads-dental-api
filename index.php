@@ -24,9 +24,7 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/controllers/',
         __DIR__ . '/models/',
         __DIR__ . '/repositories/',
-        __DIR__ . '/middleware/',
-        __DIR__ . '/config/',
-        __DIR__ . '/database/',
+        __DIR__ . '/middleware/'
     ];
 
     foreach ($baseDirs as $baseDir) {
@@ -37,6 +35,9 @@ spl_autoload_register(function ($class) {
         }
     }
 });
+
+include_once('config/database.php');
+include_once('config/jwt.php');
 
 $database = new Database();
 $db = $database->getConnection();
